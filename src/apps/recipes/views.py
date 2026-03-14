@@ -96,13 +96,8 @@ def recipe_update(request, pk):
 
             ingredient_formset.save()
             for ingredient in ingredient_formset.deleted_objects:
-                ingredient.delete()
-            print("Ingrédients sauvegardés:", recipe.ingredients.count())
-            print("Form errors:", form.errors)
-            print("Ingredient errors:", ingredient_formset.errors)
-            print("Step errors:", step_formset.errors)
-            print("Non form errors:", ingredient_formset.non_form_errors())
-            print("Step non form errors:", step_formset.non_form_errors())
+                if ingredient.pk:
+                    ingredient.delete()
 
             step_formset.instance = recipe
             steps = step_formset.save(commit=False)
