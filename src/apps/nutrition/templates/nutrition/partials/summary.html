@@ -1,0 +1,96 @@
+{% if data.coverage_percent == 0 %}
+  <p style="color:var(--color-muted)">
+    <i class="fa-solid fa-circle-info"></i>
+    Aucun ingrédient associé à la base CIQUAL.
+    Modifiez la recette pour associer les ingrédients.
+  </p>
+{% else %}
+  {% if data.warnings %}
+    <div style="background:#fff8e1;border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:0.85rem">
+      <strong><i class="fa-solid fa-triangle-exclamation"></i> Ingrédients non calculés :</strong>
+      <ul style="margin:0.5rem 0 0 1rem;padding:0">
+        {% for w in data.warnings %}<li>{{ w }}</li>{% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <p style="color:var(--color-muted);font-size:0.85rem;margin-bottom:1rem">
+    Couverture CIQUAL : {{ data.coverage_percent }}% des ingrédients
+    — Total recette : {{ data.total_grams }}g
+  </p>
+
+  <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
+    <thead>
+      <tr style="background:var(--color-bg);border-bottom:2px solid var(--color-secondary)">
+        <th style="padding:0.5rem;text-align:left">Nutrition</th>
+        <th style="padding:0.5rem;text-align:right">Pour 100g</th>
+        <th style="padding:0.5rem;text-align:right">Par portion</th>
+        <th style="padding:0.5rem;text-align:right">Total recette</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% with p100=data.per_100g ps=data.per_serving tot=data.total %}
+      <tr style="border-bottom:1px solid var(--color-secondary)">
+        <td style="padding:0.5rem">Énergie (kJ)</td>
+        <td style="padding:0.5rem;text-align:right">{{ p100.energy_kj }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ ps.energy_kj }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ tot.energy_kj }}</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-secondary)">
+          <td style="padding:0.5rem">Énergie (kcal)</td>
+          <td style="padding:0.5rem;text-align:right">{{ p100.energy_kcal }}</td>
+          <td style="padding:0.5rem;text-align:right">{{ ps.energy_kcal }}</td>
+          <td style="padding:0.5rem;text-align:right">{{ tot.energy_kcal }}</td>
+        </tr>
+      <tr style="border-bottom:1px solid var(--color-secondary)">
+        <td style="padding:0.5rem">Protéines (g)</td>
+        <td style="padding:0.5rem;text-align:right">{{ p100.proteins }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ ps.proteins }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ tot.proteins }}</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-secondary)">
+        <td style="padding:0.5rem">Glucides (g)</td>
+        <td style="padding:0.5rem;text-align:right">{{ p100.carbs }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ ps.carbs }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ tot.carbs }}</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-secondary)">
+        <td style="padding:0.5rem;padding-left:1.5rem;color:var(--color-muted)">dont sucres</td>
+        <td style="padding:0.5rem;text-align:right">{{ p100.sugars }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ ps.sugars }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ tot.sugars }}</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-secondary)">
+        <td style="padding:0.5rem">Lipides (g)</td>
+        <td style="padding:0.5rem;text-align:right">{{ p100.fat }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ ps.fat }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ tot.fat }}</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-secondary)">
+        <td style="padding:0.5rem;padding-left:1.5rem;color:var(--color-muted)">dont saturés</td>
+        <td style="padding:0.5rem;text-align:right">{{ p100.saturated_fat }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ ps.saturated_fat }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ tot.saturated_fat }}</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-secondary)">
+        <td style="padding:0.5rem">Fibres (g)</td>
+        <td style="padding:0.5rem;text-align:right">{{ p100.fiber }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ ps.fiber }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ tot.fiber }}</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-secondary)">
+          <td style="padding:0.5rem">Cholestérol (mg)</td>
+          <td style="padding:0.5rem;text-align:right">{{ p100.cholesterol }}</td>
+          <td style="padding:0.5rem;text-align:right">{{ ps.cholesterol }}</td>
+          <td style="padding:0.5rem;text-align:right">{{ tot.cholesterol }}</td>
+        </tr>
+      <tr>
+        <td style="padding:0.5rem">Sel (g)</td>
+        <td style="padding:0.5rem;text-align:right">{{ p100.salt }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ ps.salt }}</td>
+        <td style="padding:0.5rem;text-align:right">{{ tot.salt }}</td>
+      </tr>
+      {% endwith %}
+    </tbody>
+  </table>
+{% endif %}

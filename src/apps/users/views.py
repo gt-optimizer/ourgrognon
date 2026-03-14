@@ -1,0 +1,15 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+
+
+def landing(request):
+    if request.user.is_authenticated:
+        return redirect('recipes:list')
+    return render(request, 'users/landing.html')
+
+
+@login_required
+def profile(request):
+    return render(request, 'users/profile.html', {
+        'user': request.user
+    })

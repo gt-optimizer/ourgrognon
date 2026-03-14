@@ -1,0 +1,63 @@
+@media (max-width: 1024px) {
+  .recipe-detail-grid {
+    grid-template-columns: 240px 1fr;
+    grid-template-rows: auto auto;
+  }
+  .recipe-sidebar-right {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  .recipes-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .header-search { display: none; }
+  .nav-link { display: none; }
+
+  .recipe-detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .recipe-sidebar-left,
+  .recipe-center,
+  .recipe-sidebar-right {
+    grid-column: 1;
+  }
+
+  /* Ordre mobile */
+  .recipe-sidebar-left  { order: 1; }
+  .recipe-center        { order: 2; }
+  .recipe-sidebar-right { order: 3; grid-template-columns: 1fr; }
+
+  .recipes-grid { grid-template-columns: 1fr; }
+  .filter-bar { flex-direction: column; }
+  .form-grid, .form-grid-3 { grid-template-columns: 1fr; }
+
+  /* Ingrédients sur 2 lignes */
+  .ingredient-row {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: auto auto;
+  }
+  .ingredient-row > *:nth-child(1) { grid-column: 1; }
+  .ingredient-row > *:nth-child(2) { grid-column: 2; }
+  .ingredient-row > *:nth-child(3) { grid-column: 1 / -1; }
+  .ingredient-row > *:nth-child(4) { grid-column: 2; justify-self: end; }
+  .ingredient-row > *:nth-child(5) { display: none; }
+
+  .quick-info-grid { grid-template-columns: repeat(4, 1fr); }
+  .profile-header { flex-direction: column; text-align: center; }
+
+  .demo-nav { top: 60px; }
+  .header-inner { height: 60px; }
+  .landing-hero { padding: 3rem 1.5rem; }
+}
+
+@media (max-width: 480px) {
+  /* Ingrédients : on garde le layout 2 lignes du 768px */
+  .ingredient-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .quick-info-grid { grid-template-columns: 1fr 1fr; }
+  .recipe-sidebar-right { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,52 @@
+{% load static %}
+<header class="site-header">
+  <div class="header-inner">
+
+    <!-- Logo -->
+<a href="{% if user.is_authenticated %}{% url 'recipes:list' %}{% else %}{% url 'users:landing' %}{% endif %}"
+   class="site-logo"
+   style="display:flex;align-items:center;gap:0.5rem">
+
+  Ours <span>Grognon</span>
+  {% load static %}
+  <img src="{% static 'images/ours_grognon.png' %}"
+       alt="Ours Grognon"
+       style="height:40px;width:auto">
+</a>
+
+    {% if user.is_authenticated %}
+
+    <!-- Barre de recherche (HTMX) -->
+    <div class="header-search" style="position:relative">
+      <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+      <input type="text"
+             name="q"
+             placeholder="Recette, ingrédient…"
+             autocomplete="off"
+             hx-get="#"
+             hx-trigger="keyup changed delay:400ms"
+             hx-target="#search-results">
+      <!-- Résultats de recherche (alimenté par HTMX) -->
+      <div id="search-results"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="header-nav">
+      <a href="#" class="nav-link">
+        <i class="fa-solid fa-utensils"></i> Recettes
+      </a>
+      <!-- Avatar = première lettre du pseudo -->
+      <a href="#" class="avatar-btn" title="Mon profil — {{ user.pseudo }}">
+        {{ user.pseudo|first|upper }}
+      </a>
+      <form method="post" action="{% url 'users:logout' %}" style="display:inline">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-ghost btn-sm">
+    <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+  </button>
+</form>
+    </nav>
+
+    {% endif %}
+  </div>
+</header>

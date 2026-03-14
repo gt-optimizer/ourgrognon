@@ -1,0 +1,44 @@
+<h2 style="margin-bottom:1.5rem">
+  <i class="fa-solid fa-calculator"></i> Données nutritionnelles
+</h2>
+<p style="color:var(--color-muted);margin-bottom:1.5rem">
+  Associez chaque ingrédient à un aliment de la base CIQUAL pour calculer les valeurs nutritionnelles.
+</p>
+
+<div id="ciqual-associations">
+  {% for ing in ingredients %}
+    <div class="form-section" style="margin-bottom:1rem;padding:1rem"
+         id="ing-row-{{ ing.pk }}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+        <strong>{{ ing.quantity }} {{ ing.get_unit_display }} {{ ing.name }}</strong>
+        {% if ing.ciqual_food %}
+          <span style="color:var(--color-accent);font-size:0.85rem">
+            <i class="fa-solid fa-circle-check"></i> {{ ing.ciqual_food.name }}
+          </span>
+        {% endif %}
+      </div>
+
+      <input type="text"
+       class="form-control"
+       placeholder="Rechercher dans la base CIQUAL…"
+       value="{% if ing.ciqual_food %}{{ ing.ciqual_food.name }}{% else %}{{ ing.name }}{% endif %}"
+       hx-get="{% url 'nutrition:search' %}"
+       hx-trigger="keyup changed delay:300ms"
+       hx-target="#results-{{ ing.pk }}"
+       hx-vals='{"ingredient_id": "{{ ing.pk }}"}'
+       hx-include="this"
+       name="q">
+
+      <div id="results-{{ ing.pk }}" style="margin-top:0.5rem"></div>
+
+    </div>
+
+  {% endfor %}
+  <div style="display:flex;justify-content:flex-end;margin-top:1.5rem">
+  <button type="button"
+          class="btn btn-primary"
+          onclick="document.getElementById('nutrition-modal').style.display='none'">
+    <i class="fa-solid fa-check"></i> Valider les associations
+  </button>
+</div>
+</div>

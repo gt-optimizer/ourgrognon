@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Recettes — Ours Grognon{% endblock %}
+{% block content %}
+<div class="main-content">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+    <div>
+      <h1 class="page-title">Nos recettes</h1>
+      <p class="page-subtitle">{{ recipes.count }} recette{{ recipes.count|pluralize }} partagée{{ recipes.count|pluralize }}</p>
+    </div>
+    <a href="{% url 'recipes:create' %}" class="btn btn-primary">
+      <i class="fa-solid fa-plus"></i> Nouvelle recette
+    </a>
+  </div>
+
+  <!-- Filtres -->
+  <form method="get" class="filter-bar">
+    <div class="filter-group">
+      <label class="form-label">Catégorie</label>
+      <select name="category" class="form-control" onchange="this.form.submit()">
+        <option value="">Toutes</option>
+        {% for value, label in categories %}
+          <option value="{{ value }}" {% if category == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filter-group" style="flex:2">
+      <label class="form-label">Recherche</label>
+      <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Titre, ingrédient…">
+    </div>
+    <div class="filter-group" style="flex:0">
+      <label class="form-label">&nbsp;</label>
+      <button type="submit" class="btn btn-primary">
+        <i class="fa-solid fa-magnifying-glass"></i> Filtrer
+      </button>
+    </div>
+  </form>
+
+  <!-- Grille -->
+  {% if recipes %}
+  <div class="recipes-grid">
+    {% for recipe in recipes %}
+    <div class="recipe-card">
+      {% if recipe.photo %}
+        <img src="{{ recipe.photo.url }}" alt="{{ recipe.title }}" class="recipe-card-img">
+      {% else %}
+        <div class="recipe-card-img-placeholder">
+          <i class="fa-solid fa-utensils" style="color:var(--color-secondary);font-size:2.5rem"></i>
+        </div>
+      {% endif %}
+      <div class="recipe-card-body">
+        <div class="recipe-card-meta">
+          <span class="badge badge-category">{{ recipe.get_category_display }}</span>
+          {% for tag in recipe.tags.all %}<span class="badge badge-tag">{{ tag }}</span>{% endfor %}
+        </div>
+        <h3 class="recipe-card-title">
+          <a href="{% url 'recipes:detail' recipe.pk %}" style="color:inherit">{{ recipe.title }}</a>
+        </h3>
+        <p class="recipe-card-desc">{{ recipe.description|truncatechars:100 }}</p>
+      </div>
+      <div class="recipe-card-footer">
+        <span class="recipe-meta-item"><i class="fa-solid fa-clock"></i> {{ recipe.prep_time|add:recipe.cook_time }} min</span>
+        <span class="recipe-meta-item"><i class="fa-solid fa-users"></i> {{ recipe.servings }} pers.</span>
+        <span class="recipe-meta-item"><i class="fa-solid fa-user-pen"></i> {{ recipe.author.pseudo }}</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div style="text-align:center;padding:4rem 2rem;color:var(--color-text-light)">
+    <i class="fa-solid fa-bowl-food" style="font-size:3rem;margin-bottom:1rem;display:block"></i>
+    <p>Aucune recette pour l'instant.<br>Soyez le premier à en partager une !</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

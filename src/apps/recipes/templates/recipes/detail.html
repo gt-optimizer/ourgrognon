@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% block title %}{{ recipe.title }} — Ours Grognon{% endblock %}
+{% block content %}
+<div class="main-content">
+  <p style="font-size:0.85rem;color:var(--color-text-light);margin-bottom:1.5rem">
+    <a href="{% url 'recipes:list' %}">Recettes</a> ›
+    {{ recipe.get_category_display }} ›
+    {{ recipe.title }}
+  </p>
+
+  <div class="recipe-detail-grid">
+
+    <!-- COLONNE GAUCHE -->
+    <div class="recipe-sidebar-left">
+      {% if recipe.photo %}
+        <img src="{{ recipe.photo.url }}" alt="{{ recipe.title }}" class="recipe-main-photo">
+      {% else %}
+        <div class="recipe-main-photo-placeholder">
+          <i class="fa-solid fa-utensils" style="color:var(--color-secondary);font-size:3.5rem"></i>
+        </div>
+      {% endif %}
+
+      <div class="info-card">
+        <div class="info-card-title">Infos pratiques</div>
+        <div class="quick-info-grid">
+          <div class="quick-info-item">
+            <span class="quick-info-value">{{ recipe.prep_time }}'</span>
+            <span class="quick-info-label">Préparation</span>
+          </div>
+          <div class="quick-info-item">
+            <span class="quick-info-value">{{ recipe.cook_time }}'</span>
+            <span class="quick-info-label">Cuisson</span>
+          </div>
+        </div>
+        <hr class="divider">
+        <div style="text-align:center">
+          <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-text-light);margin-bottom:0.4rem">Personnes</div>
+          <div class="portion-selector">
+            <button class="portion-btn" onclick="changePortion(-1)" type="button">−</button>
+            <span class="portion-count" id="portions">{{ recipe.servings }}</span>
+            <button class="portion-btn" onclick="changePortion(1)" type="button">+</button>
+          </div>
+        </div>
+      </div>
+
+
+        {% if request.user == recipe.author or request.user.is_staff %}
+<div class="btn-group" style="flex-direction:column">
+  <a href="{% url 'recipes:update' recipe.pk %}" class="btn btn-secondary btn-sm">
+    <i class="fa-solid fa-pen"></i> Modifier
+  </a>
+  <button type="button" class="btn btn-secondary btn-sm"
+          hx-get="{% url 'nutrition:modal' recipe.pk %}"
+          hx-target="#nutrition-modal-content"
+          hx-trigger="click"
+          onclick="document.getElementById('nutrition-modal').style.display='flex'">
+    <i class="fa-solid fa-calculator"></i> Nutrition
+  </button>
+  <form method="post" action="{% url 'recipes:delete' recipe.pk %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger btn-sm"
+            onclick="return confirm('Supprimer « {{ recipe.title }} » ?')">
+      <i class="fa-solid fa-trash"></i> Supprimer
+    </button>
+  </form>
+</div>
+{% endif %}
+    </div>
+
+    <!-- COLONNE CENTRE -->
+    <div class="recipe-center">
+      <div class="recipe-title-block">
+        <div class="recipe-meta-bar">
+          <span class="badge badge-category">{{ recipe.get_category_display }}</span>
+          {% for tag in recipe.tags.all %}<span class="badge badge-tag">{{ tag }}</span>{% endfor %}
+        </div>
+        <h1>{{ recipe.title }}</h1>
+        <p style="font-size:0.85rem;color:var(--color-text-light)">
+          Par <strong>{{ recipe.author.pseudo }}</strong> · {{ recipe.created_at|date:"d F Y" }}
+        </p>
+      </div>
+
+      <p class="recipe-description">{{ recipe.description }}</p>
+
+      <!-- Ingrédients -->
+      <div class="info-card" style="margin-bottom:1.5rem">
+        <div class="info-card-title">
+          <i class="fa-solid fa-cart-shopping"></i> Ingrédients
+          <span style="font-weight:300;font-style:italic" id="portion-label"> pour {{ recipe.servings }} personne{{ recipe.servings|pluralize }}</span>
+        </div>
+        <ul class="ingredient-list">
+          {% for ing in recipe.ingredients.all %}
+          <li class="ingredient-item">
+            <span>{{ ing.name }}</span>
+            <span class="ingredient-qty"
+                  data-base="{{ ing.quantity|default:0 }}"
+                  data-unit="{{ ing.get_unit_display }}">
+              {% if ing.quantity %}{{ ing.quantity }} {{ ing.get_unit_display }}{% else %}pm{% endif %}
+            </span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Étapes -->
+      <h2 style="font-family:var(--font-title);font-size:1.2rem;color:var(--color-primary);margin-bottom:1rem">
+        <i class="fa-solid fa-list-ol"></i> Préparation
+      </h2>
+      <ol class="step-list">
+        {% for step in recipe.steps.all %}
+        <li class="step-item">
+          <div class="step-number">{{ step.order }}</div>
+          <div class="step-content">
+            <p>{{ step.description }}</p>
+            {% if step.photo %}
+              <img src="{{ step.photo.url }}" alt="Étape {{ step.order }}" class="step-photo">
+            {% endif %}
+          </div>
+        </li>
+        {% endfor %}
+      </ol>
+
+      <!-- Valeurs nutritionnelles (HTMX) -->
+      <div class="info-card" style="margin-top:1.5rem;margin-bottom:1.5rem">
+        <div class="info-card-title">
+          <i class="fa-solid fa-chart-pie"></i> Valeurs nutritionnelles
+        </div>
+        <div id="nutrition-summary"
+             hx-get="{% url 'nutrition:summary' recipe.pk %}"
+             hx-trigger="load">
+          <p style="color:var(--color-muted)">
+            <i class="fa-solid fa-spinner fa-spin"></i> Chargement…
+          </p>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Commentaires -->
+      <h2 style="font-family:var(--font-title);font-size:1.2rem;color:var(--color-primary);margin-bottom:1rem">
+        <i class="fa-solid fa-comments"></i> Commentaires ({{ recipe.comments.count }})
+      </h2>
+      <div class="comment-list">
+        {% for comment in recipe.comments.all %}
+        <div class="comment-item">
+          <div class="comment-header">
+            <span class="comment-author">{{ comment.author.pseudo }}</span>
+            <span class="comment-date">{{ comment.created_at|date:"d/m/Y" }}</span>
+          </div>
+          <p class="comment-text">{{ comment.text }}</p>
+        </div>
+        {% empty %}
+        <p style="color:var(--color-text-light);font-style:italic">Aucun commentaire pour l'instant.</p>
+        {% endfor %}
+      </div>
+
+      <div class="comment-form" style="margin-top:1.5rem">
+        <form method="post" action="{% url 'social:comment_create' recipe.pk %}">
+          {% csrf_token %}
+          <textarea name="text" class="form-control"
+                    placeholder="Partagez votre expérience, une variante, une astuce…"></textarea>
+          <div style="margin-top:0.5rem;text-align:right">
+            <button type="submit" class="btn btn-accent btn-sm">
+              <i class="fa-solid fa-paper-plane"></i> Publier
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- COLONNE DROITE -->
+    <div class="recipe-sidebar-right">
+      <div class="info-card">
+        <div class="info-card-title"><i class="fa-solid fa-tags"></i> Tags</div>
+        <div class="tags-list">
+          {% for tag in recipe.tags.all %}
+            <span class="badge badge-tag">{{ tag }}</span>
+          {% empty %}
+            <span style="color:var(--color-text-light);font-size:0.85rem">Aucun tag</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- Modal nutrition -->
+<div id="nutrition-modal"
+     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:white;border-radius:12px;padding:2rem;max-width:700px;width:90%;max-height:80vh;overflow-y:auto;position:relative">
+    <button type="button"
+            onclick="document.getElementById('nutrition-modal').style.display='none'"
+            style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div id="nutrition-modal-content">
+      <p style="text-align:center;color:var(--color-muted)">
+        <i class="fa-solid fa-spinner fa-spin"></i> Chargement…
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const basePortions = {{ recipe.servings }};
+  let currentPortions = basePortions;
+
+  function changePortion(delta) {
+    currentPortions = Math.max(1, currentPortions + delta);
+    document.getElementById('portions').textContent = currentPortions;
+    document.getElementById('portion-label').textContent =
+      ' pour ' + currentPortions + ' personne' + (currentPortions > 1 ? 's' : '');
+    const ratio = currentPortions / basePortions;
+    document.querySelectorAll('.ingredient-qty[data-base]').forEach(el => {
+      const base = parseFloat(el.dataset.base);
+      const unit = el.dataset.unit;
+      if (!base) return;
+      const val = Math.round(base * ratio * 10) / 10;
+      el.textContent = val + ' ' + unit;
+    });
+  }
+</script>
+{% endblock %}

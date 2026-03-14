@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ours Grognon — Bienvenue{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Landing page — pas de header nav, centrage vertical */
+  body { background: var(--color-bg-warm); }
+  .landing-wrap {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+  }
+  .landing-logo {
+    font-family: var(--font-title);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+  }
+  .landing-logo span { color: var(--color-accent); font-style: italic; }
+  .landing-bear {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+  .landing-tagline {
+    font-size: 1.1rem;
+    color: var(--color-text-light);
+    font-weight: 300;
+    max-width: 400px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.8;
+  }
+  .landing-card {
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem 3rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-border);
+    max-width: 420px;
+    width: 100%;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="landing-wrap">
+
+  <img src="{% static 'images/ours_grognon.png' %}"
+       alt="Ours Grognon"
+       style="width:120px;height:120px;object-fit:contain;margin-bottom:1.5rem;"
+       onerror="this.style.display='none'">
+
+  <div class="landing-logo">Ours <span>Grognon</span></div>
+  <p class="landing-tagline">
+    Le carnet de recettes privé de notre communauté.<br>
+    Réservé aux membres.
+  </p>
+
+  <div class="landing-card">
+    <a href="{% url 'users:login' %}" class="btn btn-primary btn-lg btn-block">
+      <i class="fa-solid fa-right-to-bracket"></i>
+      Se connecter
+    </a>
+    <p style="margin-top:1.25rem;font-size:0.8rem;color:var(--color-text-light);">
+      Pas encore membre ? Contactez un administrateur.
+    </p>
+  </div>
+
+</div>
+{% endblock %}
