@@ -1,22 +1,18 @@
 {% load static %}
 <header class="site-header">
   <div class="header-inner">
-
     <!-- Logo -->
-<a href="{% if user.is_authenticated %}{% url 'recipes:list' %}{% else %}{% url 'users:landing' %}{% endif %}"
-   class="site-logo"
-   style="display:flex;align-items:center;gap:0.5rem">
-
-  Ours <span>Grognon</span>
-  {% load static %}
-  <img src="{% static 'images/ours_grognon.png' %}"
-       alt="Ours Grognon"
-       style="height:40px;width:auto">
-</a>
+    <a href="{% if user.is_authenticated %}{% url 'recipes:list' %}{% else %}{% url 'users:landing' %}{% endif %}"
+       class="site-logo"
+       style="display:flex;align-items:center;gap:0.5rem">
+      Ours <span>Grognon</span>
+      <img src="{% static 'images/ours_grognon.png' %}"
+           alt="Ours Grognon"
+           style="height:40px;width:auto">
+    </a>
 
     {% if user.is_authenticated %}
-
-    <!-- Barre de recherche (HTMX) -->
+    <!-- Barre de recherche -->
     <div class="header-search" style="position:relative">
       <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
       <input type="text"
@@ -26,27 +22,64 @@
              hx-get="#"
              hx-trigger="keyup changed delay:400ms"
              hx-target="#search-results">
-      <!-- Résultats de recherche (alimenté par HTMX) -->
       <div id="search-results"></div>
     </div>
 
     <!-- Navigation -->
     <nav class="header-nav">
-      <a href="#" class="nav-link">
+      <a href="{% url 'recipes:list' %}" class="nav-link">
         <i class="fa-solid fa-utensils"></i> Recettes
       </a>
-      <!-- Avatar = première lettre du pseudo -->
-      <a href="#" class="avatar-btn" title="Mon profil — {{ user.pseudo }}">
-        {{ user.pseudo|first|upper }}
-      </a>
-      <form method="post" action="{% url 'users:logout' %}" style="display:inline">
-  {% csrf_token %}
-  <button type="submit" class="btn btn-ghost btn-sm">
-    <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
-  </button>
-</form>
-    </nav>
 
+      <!-- Avatar avec dropdown -->
+      <div style="position:relative" id="avatar-wrapper">
+        <button type="button" class="avatar-btn" title="Mon profil — {{ user.pseudo }}"
+                onclick="document.getElementById('avatar-menu').classList.toggle('open')">
+          {{ user.pseudo|first|upper }}
+        </button>
+        <div id="avatar-menu"
+             style="display:none;position:absolute;right:0;top:110%;background:white;border-radius:8px;
+                    box-shadow:0 4px 16px rgba(0,0,0,0.12);min-width:180px;z-index:100;overflow:hidden">
+          <a href="{% url 'users:profile' %}"
+             style="display:block;padding:0.75rem 1rem;color:inherit;text-decoration:none;border-bottom:1px solid var(--color-secondary)">
+            <i class="fa-solid fa-user"></i> Mon profil
+          </a>
+          <a href="{% url 'users:password_change' %}"
+             style="display:block;padding:0.75rem 1rem;color:inherit;text-decoration:none;border-bottom:1px solid var(--color-secondary)">
+            <i class="fa-solid fa-lock"></i> Changer le mot de passe
+          </a>
+          <form method="post" action="{% url 'users:logout' %}">
+            {% csrf_token %}
+            <button type="submit"
+                    style="width:100%;padding:0.75rem 1rem;background:none;border:none;
+                           text-align:left;cursor:pointer;color:inherit">
+              <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
     {% endif %}
   </div>
 </header>
+
+<script>
+  // Fermer le dropdown en cliquant ailleurs
+  document.addEventListener('click', function(e) {
+    const wrapper = document.getElementById('avatar-wrapper');
+    const menu = document.getElementById('avatar-menu');
+    if (wrapper && menu && !wrapper.contains(e.target)) {
+      menu.style.display = 'none';
+      menu.classList.remove('open');
+    }
+  });
+
+  // Toggle display avec la classe open
+  const menu = document.getElementById('avatar-menu');
+  if (menu) {
+    const observer = new MutationObserver(function() {
+      menu.style.display = menu.classList.contains('open') ? 'block' : 'none';
+    });
+    if (menu) observer.observe(menu, { attributes: true, attributeFilter: ['class'] });
+  }
+</script>
