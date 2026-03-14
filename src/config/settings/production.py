@@ -22,7 +22,8 @@ DATABASES = {
 }
 
 STATIC_ROOT = '/home/oursgrognon/www/staticfiles'
-MEDIA_ROOT  = '/home/oursgrognon/www/media'
+MEDIA_ROOT = '/home/oursgrognon/www/src/media'
+
 
 SECURE_SSL_REDIRECT = False
 CSRF_COOKIE_SECURE = True
