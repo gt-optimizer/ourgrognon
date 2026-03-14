@@ -21,7 +21,7 @@ DATABASES = {
     }
 }
 
-STATIC_ROOT = '/home/oursgrognon/www/staticfiles'
+STATIC_ROOT = '/home/oursgrognon/www/src/staticfiles'
 MEDIA_ROOT = '/home/oursgrognon/www/src/media'
 
 
