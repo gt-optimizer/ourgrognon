@@ -19,7 +19,7 @@ class RecipeForm(forms.ModelForm):
             'servings':    forms.NumberInput(attrs={'class': 'form-control'}),
             'prep_time':   forms.NumberInput(attrs={'class': 'form-control'}),
             'cook_time':   forms.NumberInput(attrs={'class': 'form-control'}),
-            'photo':       forms.FileInput(attrs={'class': 'form-control'}),
+            'photo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'tags': TagWidget(attrs={
                 'class': 'form-control',
                 'placeholder': 'végétarien, rapide…'
