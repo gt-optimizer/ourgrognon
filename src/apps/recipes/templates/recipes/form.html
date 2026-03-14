@@ -225,7 +225,7 @@
 
     template.id = '';
     template.style.display = '';
-    template.innerHTML = template.innerHTML.replace(/__prefix__/g, prefix + '-' + count);
+    template.innerHTML = template.innerHTML.replace(/__prefix__/g, count);
     container.appendChild(template);
     totalForms.value = count + 1;
   }
