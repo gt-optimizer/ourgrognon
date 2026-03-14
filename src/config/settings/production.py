@@ -1,8 +1,14 @@
 from .base import *
+import os
 
 DEBUG = False
 
 ALLOWED_HOSTS = [os.environ['ALLOWED_HOSTS']]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://oursgrognon.alwaysdata.net',
+    'https://oursgrognon.optimizer-labs.fr',
+]
 
 DATABASES = {
     'default': {
@@ -15,7 +21,10 @@ DATABASES = {
     }
 }
 
-# Sécurité HTTPS
+STATIC_ROOT = '/home/oursgrognon/www/staticfiles'
+MEDIA_ROOT  = '/home/oursgrognon/www/media'
+
+SECURE_SSL_REDIRECT = False
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

@@ -3,3 +3,11 @@
 __pycache__/
 *.pyc
 db.sqlite3
+
+media/
+
+# Base SQLite locale
+db.sqlite3
+
+# Fichier CIQUAL (lourd, inutile sur GitHub)
+*.xlsx
