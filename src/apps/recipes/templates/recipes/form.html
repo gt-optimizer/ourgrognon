@@ -178,27 +178,39 @@
 
   {# Templates cachés HORS du formulaire pour le clonage JS #}
   <div id="ingredients-empty" style="display:none"
-       class="ingredient-row"
-       aria-hidden="true">
-    {{ ingredient_formset.empty_form.quantity }}
-    {{ ingredient_formset.empty_form.unit }}
-    {{ ingredient_formset.empty_form.name }}
-    <div></div>
+     class="ingredient-row"
+     style="display:grid;grid-template-columns:80px 120px 1fr 40px;gap:0.5rem;align-items:end"
+     aria-hidden="true">
+  {{ ingredient_formset.empty_form.quantity }}
+  {{ ingredient_formset.empty_form.unit }}
+  {{ ingredient_formset.empty_form.name }}
+  <div>
+    <button type="button" class="btn btn-danger btn-sm btn-delete-row" title="Supprimer">
+      <i class="fa-solid fa-trash"></i>
+    </button>
   </div>
+  {{ ingredient_formset.empty_form.id }}
+</div>
 
   <div id="steps-empty" style="display:none"
-       class="step-form-item"
-       aria-hidden="true">
-    <div class="step-number">+</div>
-    <div style="flex:1;display:flex;flex-direction:column;gap:0.5rem">
-      {{ step_formset.empty_form.description }}
-      <div>
-        <label class="form-label"><i class="fa-solid fa-camera"></i> Photo (optionnel)</label>
-        {{ step_formset.empty_form.photo }}
-      </div>
+     class="step-form-item"
+     style="display:flex;gap:1rem;align-items:flex-start"
+     aria-hidden="true">
+  <div class="step-number">+</div>
+  <div style="flex:1;display:flex;flex-direction:column;gap:0.5rem">
+    {{ step_formset.empty_form.description }}
+    <div>
+      <label class="form-label"><i class="fa-solid fa-camera"></i> Photo (optionnel)</label>
+      {{ step_formset.empty_form.photo }}
     </div>
-    <div></div>
   </div>
+  <div style="display:flex;flex-direction:column;gap:0.5rem">
+    <button type="button" class="btn btn-danger btn-sm btn-delete-row" title="Supprimer">
+      <i class="fa-solid fa-trash"></i>
+    </button>
+    {{ step_formset.empty_form.id }}
+  </div>
+</div>
 
 </div>
 {% endblock %}
