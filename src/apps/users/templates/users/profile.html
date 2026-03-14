@@ -1,10 +1,21 @@
 {% extends 'base.html' %}
-
 {% block title %}Mon profil — Ours Grognon{% endblock %}
 
 {% block content %}
 <div class="main-content">
   <h1 class="page-title">Bonjour, {{ user.pseudo }} !</h1>
-  <p>Page profil — en construction.</p>
+
+  <div class="form-section" style="max-width:500px">
+    <div class="form-section-title">
+      <i class="fa-solid fa-user"></i> Mon compte
+    </div>
+    <p style="margin-bottom:1.5rem">
+      <strong>Pseudo :</strong> {{ user.pseudo }}<br>
+      <strong>Email :</strong> {{ user.email }}
+    </p>
+    <a href="{% url 'users:password_change' %}" class="btn btn-secondary">
+      <i class="fa-solid fa-lock"></i> Changer mon mot de passe
+    </a>
+  </div>
 </div>
 {% endblock %}
